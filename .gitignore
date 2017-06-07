@@ -1,0 +1,6 @@
+!.gitkeep
+/build
+/vendor
+/data
+*.orig
+.idea/

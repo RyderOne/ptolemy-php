@@ -1,0 +1,23 @@
+{
+    "name": "ryderone/ptolemy-php",
+    "description": "PHP source code static map generator",
+    "license": ["GNU General Public License v3.0"],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "extra": {
+    },
+    "require": {
+        "php": "~7.0",
+        "nikic/php-parser": "~3.0.5",
+        "symfony/console": "~3.2.8",
+        "symfony/finder": "~3.3.0"
+    },
+    "require-dev": {
+        "symfony/var-dumper": "~3.3.0"
+    },
+    "autoload": {
+        "psr-4": {"PtolemyPHP\\": "src/"}
+    },
+    "autoload-dev": {
+    }
+}
