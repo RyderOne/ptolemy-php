@@ -6,6 +6,7 @@ class ReflexionMethod
 {
     protected $name;
     protected $relations = [];
+    protected $rawRelations = [];
     protected $arguments = [];
     protected $class;
 
@@ -62,6 +63,19 @@ class ReflexionMethod
         $this->relations[] = $relation;
     }
 
+    public function addRawRelation($classKey, $methodName)
+    {
+        $this->rawRelations[] = [
+            'classKey' => $classKey,
+            'methodName' => $methodName
+        ];
+    }
+
+    public function getRawRelations()
+    {
+        return $this->rawRelations;
+    }
+
     /**
      * Gets the value of arguments.
      *
@@ -86,10 +100,26 @@ class ReflexionMethod
         return $this;
     }
 
+    public function addArgument($argument)
+    {
+        $this->arguments[] = $argument;
+    }
+
+    public function getArgumentByName($name)
+    {
+        foreach ($this->arguments as $argument) {
+            if ($argument['name'] === $name) {
+                return $argument;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * Gets the value of class.
      *
-     * @return mixed
+     * @return ReflexionClass
      */
     public function getClass()
     {

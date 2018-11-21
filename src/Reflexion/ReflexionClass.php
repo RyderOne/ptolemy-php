@@ -73,6 +73,16 @@ class ReflexionClass
         return false;
     }
 
+    public function getMethodByName($name)
+    {
+        foreach ($this->methods as $method) {
+            if ($method->getName() === $name) {
+                return $method;
+            }
+        }
+        return null;
+    }
+
     /**
      * Gets the value of properties.
      *

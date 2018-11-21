@@ -56,6 +56,7 @@ class MapCommand extends Command
             }
         }
 
-        // dump(CallStore::$classes);
+        CallStore::resolveRawRelations();
+        CallStore::dumpRelations();
     }
 }

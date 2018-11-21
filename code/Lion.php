@@ -2,11 +2,11 @@
 
 namespace Animal;
 
-class Bear implements AnimalInterface
+class Lion implements AnimalInterface
 {
     protected $size;
-    protected $life = 50;
-    protected $attack = 2;
+    protected $life = 30;
+    protected $attack = 5;
 
     /**
      * Gets the value of size.

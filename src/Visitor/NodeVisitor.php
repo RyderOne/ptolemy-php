@@ -15,53 +15,39 @@ class NodeVisitor extends NodeVisitorAbstract
 {
     public function enterNode(Node $node)
     {
-        $values = [
-            'class' => get_class($node),
-        ];
-
-        if (property_exists($node, 'name')) {
-            $values['name'] = $node->name;
-        }
-
-        if (property_exists($node, 'value')) {
-            $values['value'] = $node->value;
-        }
-
-        if (method_exists($node, 'getParams')) {
-            $values['params'] = $node->getParams();
-        }
-
-
-        dump($node);
-
         if ($node instanceof MethodCall) {
-            // dump($node);
-            // dump($values);
+            CallStore::handleMethodCall($node->var->name, $node->name);
         }
 
-        // if ($node instanceof Namespace_) {
-        //     CallStore::startNamespace($node->name->toString());
-        // }
+        if ($node instanceof Namespace_) {
+            CallStore::startNamespace($node->name->toString());
+        }
 
-        // if ($node instanceof Class_) {
-        //     CallStore::startClass($node->name);
-        // }
+        if ($node instanceof Class_ || $node instanceof Node\Stmt\Interface_) {
+            CallStore::startClass($node->name);
+        }
 
-        // if ($node instanceof PropertyProperty) {
-        //     CallStore::addProperty($node->name);
-        // }
+        if ($node instanceof PropertyProperty) {
+            CallStore::addProperty($node->name);
+        }
 
-        // if ($node instanceof ClassMethod) {
-        //     CallStore::addMethod($node->name);
-        // }
+        if ($node instanceof ClassMethod) {
+            CallStore::startMethod($node->name, $node->params);
+        }
     }
 
     public function leaveNode(Node $node)
     {
-    }
+        if ($node instanceof ClassMethod) {
+            CallStore::endMethod();
+        }
 
-    public function beforeTraverse(array $nodes)
-    {
-        // dump($nodes);
+        if ($node instanceof Namespace_) {
+            CallStore::endNamespace();
+        }
+
+        if ($node instanceof Class_ || $node instanceof Node\Stmt\Interface_) {
+            CallStore::endClass();
+        }
     }
 }

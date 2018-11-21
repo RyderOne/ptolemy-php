@@ -11,25 +11,30 @@ ifneq "$(SUPPORTS_MAKE_ARGS)" ""
   COMMAND_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
   # Escape ":", "-" and "=" chars
   COMMAND_ARGS := $(subst :,\:,$(COMMAND_ARGS))
-  COMMAND_ARGS := $(subst -,\-,$(COMMAND_ARGS))
-  COMMAND_ARGS := $(subst =,\=,$(COMMAND_ARGS))
   # ...and turn them into do-nothing targets
   $(eval $(COMMAND_ARGS):;@:)
 endif
 
+COMPOSER_OPTIONS= --rm -v $(shell pwd):/app --user $(UID):$(GID) --volume ~/.composer/cache:/tmp
+
+DOCKER_COMPOSE_RUN=docker-compose run --rm ptolemy-php
+
 # Use this target to test the phar file
 run:
-	@docker-compose run --rm ptolemy-php php ./build/ptolemy-php.phar
+	@$(DOCKER_COMPOSE_RUN) php ./build/ptolemy-php.phar map /usr/target
 
 composer-install:
-	@docker run --rm -v $(shell pwd):/app composer/composer install
+	@docker run $(COMPOSER_OPTIONS) composer/composer install
 
 composer-update:
-	@docker run --rm -v $(shell pwd):/app composer/composer update $(COMMAND_ARGS)
+	@docker run $(COMPOSER_OPTIONS) composer/composer update $(COMMAND_ARGS)
 
 # Use this target to build the phar file
 build:
-	@docker run --rm -v $(shell pwd):/usr/src ryderone/docker-box-project box build
+	@docker run --rm -v $(shell pwd):/usr/src --user $(UID):$(GID) ryderone/docker-box-project box build
 
 command:
-	@docker-compose run --rm ptolemy-php ./bin/ptolemy-php $(COMMAND_ARGS)
+	@$(DOCKER_COMPOSE_RUN) ./bin/ptolemy-php $(COMMAND_ARGS)
+
+map:
+	@$(DOCKER_COMPOSE_RUN) ./bin/ptolemy-php map -v /usr/target/
