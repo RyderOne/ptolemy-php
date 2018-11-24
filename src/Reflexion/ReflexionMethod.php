@@ -139,4 +139,28 @@ class ReflexionMethod
 
         return $this;
     }
+
+    public function getKey()
+    {
+        return $this->getClass()->getKey().'->'.$this->getName().'()';
+    }
+
+    public function toJsonArray()
+    {
+        $json = [
+            'name' => $this->name,
+            'key' => $this->getKey(),
+            'relations' => [],
+        ];
+
+        /** @var ReflexionMethod $method */
+        foreach ($this->relations as $method) {
+            if (!isset($json['relations'][$method->getKey()])) {
+                $json['relations'][$method->getKey()] = 0;
+            }
+            $json['relations'][$method->getKey()]++;
+        }
+
+        return $json;
+    }
 }

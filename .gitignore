@@ -1,6 +1,12 @@
 !.gitkeep
-/build
+!.gitignore
 /vendor
 /data
 *.orig
 .idea/
+test/*
+!test/.gitkeep
+output/*
+!output/.gitkeep
+build/*
+!build/.gitkeep

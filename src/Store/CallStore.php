@@ -181,4 +181,15 @@ class CallStore
     {
         dump($caller->getClass()->getKey().'->'.$caller->getName().'() ===> '.$callee->getClass()->getKey().'->'.$callee->getName().'()');
     }
+
+    public static function toJsonArray()
+    {
+        $json = [];
+        /** @var ReflexionClass $reflexionClass */
+        foreach (self::$classes as $reflexionClass) {
+            $json[] = $reflexionClass->toJsonArray();
+        }
+
+        return $json;
+    }
 }

@@ -140,4 +140,21 @@ class ReflexionClass
     {
         return $this->getNamespace().'\\'.$this->getName();
     }
+
+    public function toJsonArray()
+    {
+        $json = [
+            'name' => $this->name,
+            'key' => $this->getKey(),
+            'namespace' => $this->namespace,
+            'methods' => [],
+        ];
+
+        /** @var ReflexionMethod $method */
+        foreach ($this->methods as $method) {
+            $json['methods'][] = $method->toJsonArray();
+        }
+
+        return $json;
+    }
 }

@@ -1,9 +1,0 @@
-version: "2"
-
-services:
-    ptolemy-php:
-        image: php:7.1.5-alpine
-        volumes:
-            - .:/usr/src/ptolemy-php
-            - ./code:/usr/target/
-        working_dir: /usr/src/ptolemy-php

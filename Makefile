@@ -15,13 +15,10 @@ ifneq "$(SUPPORTS_MAKE_ARGS)" ""
   $(eval $(COMMAND_ARGS):;@:)
 endif
 
+
+###### COMPOSER #######
+
 COMPOSER_OPTIONS= --rm -v $(shell pwd):/app --user $(UID):$(GID) --volume ~/.composer/cache:/tmp
-
-DOCKER_COMPOSE_RUN=docker-compose run --rm ptolemy-php
-
-# Use this target to test the phar file
-run:
-	@$(DOCKER_COMPOSE_RUN) php ./build/ptolemy-php.phar map /usr/target
 
 composer-install:
 	@docker run $(COMPOSER_OPTIONS) composer/composer install
@@ -29,12 +26,34 @@ composer-install:
 composer-update:
 	@docker run $(COMPOSER_OPTIONS) composer/composer update $(COMMAND_ARGS)
 
+###### APP #######
+
+PHP_IMAGE=php:7.1.5-alpine
+VOLUME_TARGET=$(shell pwd)/code
+VOLUME_OUTPUT=$(shell pwd)/output
+
+DOCKER_RUN_OPTIONS= --rm -it \
+					--user $(UID):$(GID) \
+					--volume $(shell pwd):/usr/src/ptolemy-php \
+					--volume $(VOLUME_TARGET):/usr/target \
+					--volume $(VOLUME_OUTPUT):/usr/output \
+					--workdir /usr/src/ptolemy-php
+
+
+DOCKER_RUN=docker run $(DOCKER_RUN_OPTIONS) $(PHP_IMAGE) php
+
+### PHAR ###
 # Use this target to build the phar file
-build:
+phar-build:
 	@docker run --rm -v $(shell pwd):/usr/src --user $(UID):$(GID) ryderone/docker-box-project box build
 
-command:
-	@$(DOCKER_COMPOSE_RUN) ./bin/ptolemy-php $(COMMAND_ARGS)
+# Use this target to test the phar file
+phar-run:
+	@$(DOCKER_RUN) ./build/ptolemy-php.phar map /usr/target /usr/output/
 
-map:
-	@$(DOCKER_COMPOSE_RUN) ./bin/ptolemy-php map -v /usr/target/
+### DIRECT CONSOLE ###
+ptolemy:
+	@$(DOCKER_RUN) ./bin/ptolemy-php $(COMMAND_ARGS)
+
+ptolemy-map:
+	@$(DOCKER_RUN) ./bin/ptolemy-php map /usr/target/ /usr/output/
