@@ -8,6 +8,14 @@ class ReflexionClass
     protected $methods = [];
     protected $properties = [];
     protected $namespace;
+    protected $key;
+
+    public function __construct(string $namespace, string $name)
+    {
+        $this->name = $name;
+        $this->namespace = $namespace;
+        $this->key = $namespace.'\\'.$name;
+    }
 
     /**
      * Gets the value of name.
@@ -20,20 +28,6 @@ class ReflexionClass
     }
 
     /**
-     * Sets the value of name.
-     *
-     * @param mixed $name the name
-     *
-     * @return self
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
      * Gets the value of methods.
      *
      * @return mixed
@@ -43,24 +37,9 @@ class ReflexionClass
         return $this->methods;
     }
 
-    /**
-     * Sets the value of methods.
-     *
-     * @param mixed $methods the methods
-     *
-     * @return self
-     */
-    public function setMethods($methods)
-    {
-        $this->methods = $methods;
-
-        return $this;
-    }
-
     public function addMethod(ReflexionMethod $method)
     {
         $this->methods[] = $method;
-        $method->setClass($this);
     }
 
     public function hasMethod($name)
@@ -93,20 +72,6 @@ class ReflexionClass
         return $this->properties;
     }
 
-    /**
-     * Sets the value of properties.
-     *
-     * @param mixed $properties the properties
-     *
-     * @return self
-     */
-    public function setProperties($properties)
-    {
-        $this->properties = $properties;
-
-        return $this;
-    }
-
     public function addProperty($property)
     {
         $this->properties[] = $property;
@@ -122,30 +87,16 @@ class ReflexionClass
         return $this->namespace;
     }
 
-    /**
-     * Sets the value of namespace.
-     *
-     * @param mixed $namespace the namespace
-     *
-     * @return self
-     */
-    public function setNamespace($namespace)
-    {
-        $this->namespace = $namespace;
-
-        return $this;
-    }
-
     public function getKey()
     {
-        return $this->getNamespace().'\\'.$this->getName();
+        return $this->key;
     }
 
     public function toJsonArray()
     {
         $json = [
             'name' => $this->name,
-            'key' => $this->getKey(),
+            'key' => $this->key,
             'namespace' => $this->namespace,
             'methods' => [],
         ];

@@ -29,17 +29,13 @@ class CallStore
 
     public static function startClass($name)
     {
-        // We need to store the class in our internal store, we may have reference to it later
-        $classKey = self::$currentNamespace.'\\'.$name;
+        $reflexionClass = new ReflexionClass(self::$currentNamespace, $name);
 
-        if (!isset(self::$classes[$classKey])) {
-            self::$classes[$classKey] = (new ReflexionClass())
-                ->setNamespace(self::$currentNamespace)
-                ->setName($name)
-            ;
+        if (!isset(self::$classes[$reflexionClass->getKey()])) {
+            self::$classes[$reflexionClass->getKey()] = $reflexionClass;
         }
 
-        self::$currentClassKey = $classKey;
+        self::$currentClassKey = $reflexionClass->getKey();
     }
 
     public static function endClass()
@@ -56,19 +52,13 @@ class CallStore
         }
 
         if (!$class->hasMethod($name)) {
-            $method = (new ReflexionMethod())
-                ->setName($name)
-                ->setClass($class)
-            ;
+            $method = new ReflexionMethod($class, $name);
             $class->addMethod($method);
 
             /** @var Param $param */
             foreach ($params as $param) {
                 if ($param->type instanceof FullyQualified) {
-                    $method->addArgument([
-                        'name' => $param->name,
-                        'type' => $param->type->toString()
-                    ]);
+                    $method->addArgument($param->type->toString(), $param->name);
                 }
             }
         }
@@ -91,8 +81,9 @@ class CallStore
         }
 
         $argument = $method->getArgumentByName($varName);
+
         if ($argument !== null) {
-            $method->addRawRelation($argument['type'], $methodName);
+            $method->addRawRelation($argument, $methodName);
         }
     }
 

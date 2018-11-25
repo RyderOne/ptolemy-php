@@ -4,7 +4,7 @@
 # If the first argument is one of the supported commands, pass the other terms as args for the first one
 # https://stackoverflow.com/questions/2214575/passing-arguments-to-make-run
 # ======================================================================================================
-SUPPORTED_COMMANDS := command composer-update
+SUPPORTED_COMMANDS := command composer-update ptolemy
 SUPPORTS_MAKE_ARGS := $(findstring $(firstword $(MAKECMDGOALS)), $(SUPPORTED_COMMANDS))
 ifneq "$(SUPPORTS_MAKE_ARGS)" ""
   # use the rest as arguments for the command
@@ -56,4 +56,4 @@ ptolemy:
 	@$(DOCKER_RUN) ./bin/ptolemy-php $(COMMAND_ARGS)
 
 ptolemy-map:
-	@$(DOCKER_RUN) ./bin/ptolemy-php map /usr/target/ /usr/output/
+	@$(DOCKER_RUN) ./bin/ptolemy-php map --debug /usr/target/ /usr/output/

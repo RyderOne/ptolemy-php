@@ -9,6 +9,15 @@ class ReflexionMethod
     protected $rawRelations = [];
     protected $arguments = [];
     protected $class;
+    protected $key;
+
+    public function __construct(ReflexionClass $class, string $name)
+    {
+        $this->class = $class;
+        $this->name = $name;
+        $this->key = $class->getKey().'->'.$name.'()';
+        $this->addArgument($this->class->getKey(), 'this');
+    }
 
     /**
      * Gets the value of name.
@@ -21,20 +30,6 @@ class ReflexionMethod
     }
 
     /**
-     * Sets the value of name.
-     *
-     * @param mixed $name the name
-     *
-     * @return self
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
      * Gets the value of relations.
      *
      * @return mixed
@@ -44,29 +39,15 @@ class ReflexionMethod
         return $this->relations;
     }
 
-    /**
-     * Sets the value of relations.
-     *
-     * @param mixed $relations the relations
-     *
-     * @return self
-     */
-    public function setRelations($relations)
-    {
-        $this->relations = $relations;
-
-        return $this;
-    }
-
     public function addRelation(ReflexionMethod $relation)
     {
         $this->relations[] = $relation;
     }
 
-    public function addRawRelation($classKey, $methodName)
+    public function addRawRelation(array $argument, string $methodName)
     {
         $this->rawRelations[] = [
-            'classKey' => $classKey,
+            'classKey' => $argument['classKey'],
             'methodName' => $methodName
         ];
     }
@@ -76,33 +57,12 @@ class ReflexionMethod
         return $this->rawRelations;
     }
 
-    /**
-     * Gets the value of arguments.
-     *
-     * @return mixed
-     */
-    public function getArguments()
+    public function addArgument(string $classKey, string $name)
     {
-        return $this->arguments;
-    }
-
-    /**
-     * Sets the value of arguments.
-     *
-     * @param mixed $arguments the arguments
-     *
-     * @return self
-     */
-    public function setArguments($arguments)
-    {
-        $this->arguments = $arguments;
-
-        return $this;
-    }
-
-    public function addArgument($argument)
-    {
-        $this->arguments[] = $argument;
+        $this->arguments[] = [
+            'classKey' => $classKey,
+            'name' => $name
+        ];
     }
 
     public function getArgumentByName($name)
@@ -126,30 +86,16 @@ class ReflexionMethod
         return $this->class;
     }
 
-    /**
-     * Sets the value of class.
-     *
-     * @param mixed $class the class
-     *
-     * @return self
-     */
-    public function setClass(ReflexionClass $class)
-    {
-        $this->class = $class;
-
-        return $this;
-    }
-
     public function getKey()
     {
-        return $this->getClass()->getKey().'->'.$this->getName().'()';
+        return $this->key;
     }
 
     public function toJsonArray()
     {
         $json = [
             'name' => $this->name,
-            'key' => $this->getKey(),
+            'key' => $this->key,
             'relations' => [],
         ];
 
